@@ -1,0 +1,35 @@
+# Ignorar o ambiente virtual
+venv/
+ENV/
+env/
+
+# Ignorar arquivos de configuração do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar credenciais e variáveis de ambiente
+.env
+*.env
+
+# Ignorar dependências geradas
+*.log
+*.sqlite3
+*.db
+
+# Ignorar arquivos do VS Code e IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Ignorar arquivos de cache do Flask
+instance/
+
+# Ignorar arquivos de migração do banco (se estiver usando Flask-Migrate)
+migrations/
+
+# Ignorar pacotes do sistema
+*.egg-info/
+dist/
+build/
