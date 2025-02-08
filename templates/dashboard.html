@@ -4,17 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Bem-vindo</h1>
-        <img src="https://via.placeholder.com/300" alt="Imagem de exemplo">
-        <form action="/submit" method="POST">
-            <input type="text" name="text" placeholder="Digite algo...">
-            <button type="submit">Enviar</button>
-        </form>
-        <a href="/logout">Logout</a>
+
+    <a href="/logout" class="logout-button">Logout</a>
+
+    <h1 class="title">Bem-vindo, {{ username }}</h1>
+
+    <div class="image-container">
+        <div id="loading-spinner" class="hidden"></div> <!-- Spinner de carregamento -->
+        <img id="generated-image" {% if image_url %} src="{{ image_url }}" {% endif %} alt="Imagem gerada">
+        <div id="image-placeholder" {% if image_url %}style="display: none;"{% endif %}>Imagem será exibida aqui</div> 
     </div>
+
+    <form id="prompt-form">
+        <input type="text" id="prompt-input" name="text" placeholder="Digite algo..." required>
+        <button type="submit" class="btn">Enviar</button>
+    </form>
+
+    <script>
+        document.getElementById("prompt-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            let userPrompt = document.getElementById("prompt-input").value;
+    
+            // Exibir o spinner e esconder o placeholder/imagem anterior
+            document.getElementById("loading-spinner").classList.remove("hidden");
+            document.getElementById("image-placeholder").style.display = "none";
+            document.getElementById("generated-image").style.display = "none";
+
+            // Envia requisição
+            fetch("/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: userPrompt })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erro na requisição");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Resposta da API:", data);
+                if (data.image_url) {
+                    let imageElement = document.getElementById("generated-image");
+                    imageElement.src = data.image_url;
+                    imageElement.style.display = "block";
+
+                    document.getElementById("loading-spinner").classList.add("hidden");
+                } else {
+                    alert("Erro ao gerar imagem");
+                    document.getElementById("loading-spinner").classList.add("hidden");
+                    document.getElementById("image-placeholder").style.display = "block";
+                }
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+                alert("Erro ao gerar imagem");
+                document.getElementById("loading-spinner").classList.add("hidden");
+                document.getElementById("image-placeholder").style.display = "block";
+            });
+        });
+    </script>    
+
 </body>
 </html>

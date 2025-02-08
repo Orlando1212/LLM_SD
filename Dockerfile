@@ -1,17 +1,20 @@
-# Usar a imagem oficial do Python
+# Usar uma imagem do Python com suporte para Flask
 FROM python:3.9
 
-# Definir diretório de trabalho dentro do container
+# Definir o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Copiar arquivos para dentro do container
-COPY . /app
+# Copiar arquivos para dentro do contêiner
+COPY . .
 
-# Instalar dependências
-RUN pip install --no-cache-dir -r requirements.txt
+# Instalar as dependências do projeto
+RUN pip install -r requirements.txt
 
-# Expor a porta do Flask
-EXPOSE 5000
+# Tornar o script executável
+RUN chmod +x app.py
 
-# Comando para rodar a aplicação
-CMD ["python", "app.py"]
+# Definir a variável de ambiente do Flask
+ENV FLASK_APP=app.py
+
+# Exportar a variável de ambiente corretamente
+ENTRYPOINT ["sh", "-c", "export FAL_KEY=$FAL_API_KEY && flask run --host=0.0.0.0 --port=5000"]

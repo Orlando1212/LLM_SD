@@ -6,3 +6,7 @@ services:
       - "5000:5000"
     environment:
       - FLASK_ENV=development
+    env_file:
+      - .env  # 🔥 Carregar as variáveis do arquivo .env
+    command: >
+      sh -c "export FAL_KEY=$FAL_API_KEY && python app.py"
