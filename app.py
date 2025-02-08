@@ -35,12 +35,12 @@ def login():
     return render_template("login.html")
 
 @app.route("/dashboard")
-@login_required
+
 def dashboard():
-    return render_template("dashboard.html", username=current_user.id)
+    return render_template("dashboard.html")
 
 @app.route("/submit", methods=["POST"])
-@login_required
+
 def submit():
     data = request.form.get("text")
     return jsonify({"message": "Texto recebido", "text": data})
@@ -51,4 +51,4 @@ def logout():
     return redirect(url_for("login"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
