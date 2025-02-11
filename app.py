@@ -88,7 +88,7 @@ def submit():
                 },
                 "prompt": user_prompt,
                 "image_size": "landscape_4_3",
-                "num_images": 2,
+                "num_images": 5,
             },
             with_logs=True,
             on_queue_update=on_queue_update,
