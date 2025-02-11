@@ -7,6 +7,8 @@ services:
     environment:
       - FLASK_ENV=development
     env_file:
-      - .env  # 🔥 Carregar as variáveis do arquivo .env
+      - .env 
+    volumes:
+      - ./videos:/app/videos
     command: >
-      sh -c "export FAL_KEY=$FAL_API_KEY && python app.py"
+      sh -c "export FAL_KEY=$FAL_API_KEY && flask run --host=0.0.0.0 --port=5000"

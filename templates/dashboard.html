@@ -12,10 +12,14 @@
 
     <h1 class="title">Bem-vindo, {{ username }}</h1>
 
-    <div class="image-container">
+    <div class="media-container">
         <div id="loading-spinner" class="hidden"></div> <!-- Spinner de carregamento -->
-        <img id="generated-image" {% if image_url %} src="{{ image_url }}" {% endif %} alt="Imagem gerada">
-        <div id="image-placeholder" {% if image_url %}style="display: none;"{% endif %}>Imagem será exibida aqui</div> 
+        <img id="generated-image" {% if image_url %} src="{{ image_url }}" {% endif %} alt="Imagem gerada" style="display: none;">
+        <video id="generated-video" controls style="display: none; width: 100%; max-width: 600px;">
+            <source id="video-source" src="" type="video/mp4">
+            Seu navegador não suporta a reprodução de vídeo.
+        </video>
+        <div id="media-placeholder" {% if image_url or video_url %}style="display: none;"{% endif %}>Mídia será exibida aqui</div>
     </div>
 
     <form id="prompt-form">
@@ -26,15 +30,16 @@
     <script>
         document.getElementById("prompt-form").addEventListener("submit", function(event) {
             event.preventDefault();
-    
-            let userPrompt = document.getElementById("prompt-input").value;
-    
-            // Exibir o spinner e esconder o placeholder/imagem anterior
-            document.getElementById("loading-spinner").classList.remove("hidden");
-            document.getElementById("image-placeholder").style.display = "none";
-            document.getElementById("generated-image").style.display = "none";
 
-            // Envia requisição
+            let userPrompt = document.getElementById("prompt-input").value;
+
+            // Exibir o spinner e esconder elementos anteriores
+            document.getElementById("loading-spinner").classList.remove("hidden");
+            document.getElementById("media-placeholder").style.display = "none";
+            document.getElementById("generated-image").style.display = "none";
+            document.getElementById("generated-video").style.display = "none";
+
+            // Envia requisição para gerar mídia
             fetch("/submit", {
                 method: "POST",
                 headers: {
@@ -42,31 +47,33 @@
                 },
                 body: JSON.stringify({ text: userPrompt })
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erro na requisição");
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 console.log("Resposta da API:", data);
-                if (data.image_url) {
+                document.getElementById("loading-spinner").classList.add("hidden");
+
+                if (data.video_url) {
+                    let videoElement = document.getElementById("generated-video");
+                    let videoSource = document.getElementById("video-source");
+                    
+                    // Definir a nova URL do vídeo e forçar atualização
+                    videoSource.src = data.video_url;  // Adiciona timestamp para evitar cache
+                    videoElement.load();
+                    videoElement.style.display = "block";
+
+                    document.getElementById("media-placeholder").style.display = "none";
+                } else if (data.image_url) {
                     let imageElement = document.getElementById("generated-image");
                     imageElement.src = data.image_url;
                     imageElement.style.display = "block";
-
-                    document.getElementById("loading-spinner").classList.add("hidden");
                 } else {
-                    alert("Erro ao gerar imagem");
-                    document.getElementById("loading-spinner").classList.add("hidden");
-                    document.getElementById("image-placeholder").style.display = "block";
+                    document.getElementById("media-placeholder").style.display = "block";
                 }
             })
             .catch(error => {
                 console.error("Erro na requisição:", error);
-                alert("Erro ao gerar imagem");
                 document.getElementById("loading-spinner").classList.add("hidden");
-                document.getElementById("image-placeholder").style.display = "block";
+                document.getElementById("media-placeholder").style.display = "block";
             });
         });
     </script>    

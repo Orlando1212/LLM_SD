@@ -42,8 +42,8 @@ body {
     margin-bottom: 20px;
 }
 
-/* Imagem ou placeholder */
-.image-container {
+/* Container de mídia (imagem ou vídeo) */
+.media-container {
     width: 500px;
     height: 500px;
     background-color: #444;
@@ -61,6 +61,20 @@ body {
     max-height: 100%;
     border-radius: 10px;
     display: none;
+}
+
+#generated-video {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 10px;
+    display: none;
+}
+
+/* Placeholder para quando não há mídia */
+#media-placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 18px;
 }
 
 /* Spinner de carregamento */
